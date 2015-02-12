@@ -14,10 +14,45 @@
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n rooks placed such that none of them can attack each other
 
 window.findNRooksSolution = function(n) {
-  var solution = undefined; //fixme
 
-  console.log('Single solution for ' + n + ' rooks:', JSON.stringify(solution));
-  return solution;
+  // declare a chessboard of size n
+  var board = new Board({'n': n});
+  var numRooks = n;
+  var numRows = board.get('n');
+  var numColumns = numRows;
+  var numRooksPlaced = 0;
+
+  var placeRook = function(){
+    for(var i = 0; i < numRows; i++){
+      for(var j = 0; j < numColumns; j++){
+
+        if(board.get(i)[j] === 1){ continue; }
+        board.togglePiece(i, j);
+
+        if(board.hasAnyRooksConflicts()){
+          board.togglePiece(i, j);
+        } else {
+          numRooksPlaced++;
+          return;}
+      }
+    }
+  };
+
+  for(var i = 0; i < numRooks; i++){
+    placeRook();
+  }
+
+  if(numRooksPlaced === numRooks){ return board.rows(); }
+  return undefined;
+  //for n number of rooks,
+    //call a function that finds a conflict-free spot.
+
+  //sub-function that finds a conflict-free spot
+  // iterate over the rows
+    // for each row, iterate over columns
+      // toggle piece at current coordinates
+      // has rook conflict? if so, toggle again to remove it, and continue
+      // otherwise, sub-routine is finished
 };
 
 
