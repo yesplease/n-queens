@@ -129,56 +129,64 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
-    hasMajorDiagonalConflictAt: function(col) {
-      //call checkSubRows on every row, in effect setting a new "toprow"
-      var totalRows = this.get('n');
-      var thisBoard = this;
-      var column = col;
+    hasMajorDiagonalConflictAt: function(initialColumnIndex) {
+      var board = this;
+      var numRows = board.get('n');
 
-      var checkSubRows = function(rowIndex){
-        var sum = 0;
+      var crawlAndCheck = function(row, column, accumulator){
+        var sum = accumulator;
+        var currentRow = board.get(row);
 
-        //Pass in a  row
-        var row = thisBoard.get(rowIndex);
+        // base case!
+        //does our row exist?
+        if (!currentRow){ return sum > 1; }
+        var element = currentRow[column];
+        //does our element exist?
+        if (!element) { return sum > 1; }
 
-        //Look to one row below it, and one column to the right
-        var nextRow = thisBoard.get(rowIndex + 1);
-        if(nextRow){
-          var element = nextRow[column + 1];
-        } else {
-          var element = undefined;
-        }
-        //If that is an element
-        if(element){
-          sum += element;
-          checkSubRows(rowIndex + 1);
-        } else {
-          return sum > 1;
-        }
-          //add it to our sum
-          //checkSubRows on row.
-        //if not, return sum > 1;
-
+        // recursive case!
+        // add the element value to sum,
+        // call crawlAndCheck() on the next value
+        sum += element;
+        if(crawlAndCheck(row + 1, column + 1, sum)) { return true; }
       };
 
-      //loop over rows, checking column diagonals
-      for (var k = 0; k < totalRows; k++){
-        var hasConflict = checkSubRows(k);
-        if ( hasConflict ){ return true; }
+      for(var i = 0; i < numRows; i++){
+
+        if(crawlAndCheck(i, initialColumnIndex, 0)){ return true; }
       }
+
+      return false;
+
+      //crawl and check function (takes in row we are starting on, plus column we're starting on);
+      //check if the current value exists
+       //if so, add it to our sum
+        //increase 'currentColumn' and increase 'currentRow'
+          //if not, if sum > 1, return true;
+        //call crawl and check on that new increased 'currentColumn' and 'currentRow'
+
+
+      //we pass in our initialColumnIndex, which is where we start for each row
+      //for each row
+        //call a crawl and check function, starting at the initialColumnIndex at that row
+
+
+      //if crawl and check never breaks with a true, return false
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      var numColumns = this.get('n');
-
-      // loop over columns
-      for (var i = 0; i < numColumns; i++){
-        var hasConflict = this.hasMajorDiagonalConflictAt(i);
-        if(hasConflict){ return true; }
-
+      var numberOfColumns = this.get('n');
+      for (var i = 0; i < numberOfColumns; i++){
+        if(this.hasMajorDiagonalConflictAt(i)) { return true; };
       }
+
       return false;
+
+      //for every single column
+      //check if it has any major diagonal conflicts
+
+      //return true or false
     },
 
 
