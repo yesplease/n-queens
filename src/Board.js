@@ -142,7 +142,7 @@
         if (!currentRow){ return sum > 1; }
         var element = currentRow[column];
         //does our element exist?
-        if (!element) { return sum > 1; }
+        if (element === undefined) { return sum > 1; }
 
         // recursive case!
         // add the element value to sum,
@@ -152,26 +152,10 @@
       };
 
       for(var i = 0; i < numRows; i++){
-
         if(crawlAndCheck(i, initialColumnIndex, 0)){ return true; }
       }
 
       return false;
-
-      //crawl and check function (takes in row we are starting on, plus column we're starting on);
-      //check if the current value exists
-       //if so, add it to our sum
-        //increase 'currentColumn' and increase 'currentRow'
-          //if not, if sum > 1, return true;
-        //call crawl and check on that new increased 'currentColumn' and 'currentRow'
-
-
-      //we pass in our initialColumnIndex, which is where we start for each row
-      //for each row
-        //call a crawl and check function, starting at the initialColumnIndex at that row
-
-
-      //if crawl and check never breaks with a true, return false
     },
 
     // test if any major diagonals on this board contain conflicts
@@ -183,10 +167,6 @@
 
       return false;
 
-      //for every single column
-      //check if it has any major diagonal conflicts
-
-      //return true or false
     },
 
 
@@ -195,13 +175,44 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+    hasMinorDiagonalConflictAt: function(initialColumnIndex) {
+      var board = this;
+      var numRows = board.get('n');
+
+      //subroutine crawlAndCheck
+      var crawlAndCheck = function(row, column, accumulator){
+        var sum = accumulator;
+        var currentRow = board.get(row);
+
+        // base case
+        if(!currentRow){ return sum > 1; }
+        var element = currentRow[column];
+        if(element === undefined){ return sum > 1; }
+
+        // recursive case
+        sum += element;
+        if(crawlAndCheck(row + 1, column - 1, sum)){ return true; }
+
+      };
+
+      //for all our rows
+      for (var i = 0; i < numRows; i++){
+        if(crawlAndCheck(i, initialColumnIndex, 0)) { return true; }
+      }
+      return false;
+
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      return false; // fixme
+      //debugger;
+      //get number of columns
+      var numColumns = this.get('n');
+      //iterate over all those columns from right to left.
+      for (var i = numColumns -1; i >= 0; i-- ){
+        if(this.hasMinorDiagonalConflictAt(i)) { return true; };
+      }
+      return false;
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
