@@ -116,7 +116,6 @@
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
       for (var i = 0; i < this.get('n'); i++){
-        //var row = this.get(i);
         if(this.hasColConflictAt(i)){
           return true;
         }
@@ -130,30 +129,52 @@
     // --------------------------------------------------------------
     //
     // test if a specific major diagonal on this board contains a conflict
-    hasMajorDiagonalConflictAt: function(columnIndex) {
-      var sum = this.get(0)[columnIndex];
-      var numColumns = this.get('n');
+    hasMajorDiagonalConflictAt: function(col) {
+      //call checkSubRows on every row, in effect setting a new "toprow"
+      var totalRows = this.get('n');
+      var thisBoard = this;
+      var column = col;
 
-      for (var i = 1; i < numColumns; i++){
-        var row = this.get(i);
+      var checkSubRows = function(rowIndex){
+        var sum = 0;
 
-        if (row[i + columnIndex]){
-          sum += row[i + columnIndex];
+        //Pass in a  row
+        var row = thisBoard.get(rowIndex);
+
+        //Look to one row below it, and one column to the right
+        var nextRow = thisBoard.get(rowIndex + 1);
+        if(nextRow){
+          var element = nextRow[column + 1];
         } else {
-          break;
+          var element = undefined;
         }
-      }
+        //If that is an element
+        if(element){
+          sum += element;
+          checkSubRows(rowIndex + 1);
+        } else {
+          return sum > 1;
+        }
+          //add it to our sum
+          //checkSubRows on row.
+        //if not, return sum > 1;
 
-      return sum > 1;
+      };
+
+      //loop over rows, checking column diagonals
+      for (var k = 0; k < totalRows; k++){
+        var hasConflict = checkSubRows(k);
+        if ( hasConflict ){ return true; }
+      }
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
       var numColumns = this.get('n');
 
+      // loop over columns
       for (var i = 0; i < numColumns; i++){
-        var hasConflict = (this.hasMajorDiagonalConflictAt(i));
-
+        var hasConflict = this.hasMajorDiagonalConflictAt(i);
         if(hasConflict){ return true; }
 
       }
@@ -189,3 +210,26 @@
   };
 
 }());
+
+
+
+
+
+      // var checkSubRows = function(topRowIndex){
+      //   //sum is initialized to first element
+      //   var sum = 0;
+      //   //var numSubRows = totalRows - (topRowIndex + 1);
+
+      //   //Checking all rows under neath
+      //   for (var j = topRowIndex; j <= numSubRows; j++){
+      //     var row = thisBoard.get(j);
+      //     console.log("This is current j: ", j);
+      //     var element = row[j + columnIndex];
+      //     if (element){
+      //       sum += element;
+      //     } else {
+      //       break;
+      //     }
+      //   }
+      //   return sum > 1;
+      // };
