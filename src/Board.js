@@ -151,9 +151,8 @@
     hasAnyMajorDiagonalConflicts: function() {
       var numColumns = this.get('n');
 
-      // iterate over columns from left to right
       for (var i = 0; i < numColumns; i++){
-        var hasConflict = this.hasMajorDiagonalConflictAt(i);
+        var hasConflict = (this.hasMajorDiagonalConflictAt(i));
 
         if(hasConflict){ return true; }
 
@@ -167,33 +166,13 @@
     // --------------------------------------------------------------
     //
     // test if a specific minor diagonal on this board contains a conflict
-    hasMinorDiagonalConflictAt: function(columnIndex) {
-      var sum = this.get(0)[columnIndex];
-      var numColumns = this.get('n');
-
-      for(var i = 1; i < numColumns; i++){
-        var row = this.get(i);
-        var element = row[columnIndex - i];
-        console.log("This is the element: ", element);
-        if(element){ sum += element; }
-        else{ break; }
-      }
-
-      return sum > 1;
+    hasMinorDiagonalConflictAt: function(minorDiagonalColumnIndexAtFirstRow) {
+      return false; // fixme
     },
 
     // test if any minor diagonals on this board contain conflicts
     hasAnyMinorDiagonalConflicts: function() {
-      var numColumns = this.get('n');
-
-      // iterate over columns from right to left
-      for(var i = numColumns -1; i >= 0; i--){
-        var hasConflict = this.hasMinorDiagonalConflictAt(i);
-        //console.log("This is has conflict: ", hasConflict);
-        if(hasConflict){ return true; }
-      }
-
-      return false;
+      return false; // fixme
     }
 
     /*--------------------  End of Helper Functions  ---------------------*/
